@@ -457,7 +457,7 @@
 
         constructor: DateRangePicker,
 
-        setStartDate: function(startDate) {
+        setStartDate: function(startDate, updateFlag) {
             if (typeof startDate === 'string')
                 this.startDate = moment(startDate, this.locale.format).utcOffset(this.timeZone);
 
@@ -477,13 +477,13 @@
                 this.startDate = this.maxDate;
 
             this.selected = true;
-            if (!this.isShowing)
+            if (!this.isShowing && updateFlag)
                 this.updateElement();
 
             this.updateMonthsInView();
         },
 
-        setEndDate: function(endDate) {
+        setEndDate: function(endDate, updateFlag) {
             if (typeof endDate === 'string')
                 this.endDate = moment(endDate, this.locale.format).utcOffset(this.timeZone);
 
@@ -506,7 +506,7 @@
                 this.endDate = this.startDate.clone().add(this.dateLimit);
 
             this.selected = true;
-            if (!this.isShowing)
+            if (!this.isShowing && updateFlag)
                 this.updateElement();
 
             this.updateMonthsInView();
@@ -1471,13 +1471,21 @@
         },
 
         updateElement: function() {
-            if (this.element.is('input') && !this.singleDatePicker && this.autoUpdateInput) {
+            if (this.element.is('input') && !this.singleDatePicker && this.autoUpdateInput && this.selected) {
                 this.element.val(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
                 this.element.trigger('change');
-            } else if (this.element.is('input') && this.autoUpdateInput) {
+            } else if (this.element.is('input') && this.autoUpdateInput && this.selected) {
                 this.element.val(this.startDate.format(this.locale.format));
                 this.element.trigger('change');
+            } else if (!this.selected) {
+                this.element.val("");
+                this.element.trigger('change');
             }
+        },
+
+        clear: function() {
+            this.selected = false ;
+            this.updateElement();
         },
 
         remove: function() {
