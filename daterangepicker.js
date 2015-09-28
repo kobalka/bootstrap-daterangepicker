@@ -1484,7 +1484,8 @@
         remove: function() {
             this.container.remove();
             this.element.off('.daterangepicker');
-            this.element.removeData();
+            //todo: this line destroies all other data objects therfore you cannot decorate element with other thigs
+            //this.element.removeData();
         }
 
     };
